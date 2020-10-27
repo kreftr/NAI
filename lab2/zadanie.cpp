@@ -14,10 +14,19 @@ int main( int argc, char** argv ) {
     int s_max = 255;
     int v_max = 255;
     bool show_hsv = false;
-
+    int key;
 
      cv::VideoCapture cap(0);
      
+    if(argc==3){
+              
+        height = atoi(argv[1]);
+        width = atoi(argv[2]);
+    } else {
+
+        height = 320;
+        width = 200;
+    }
 
     if ( !cap.isOpened() ) {
         std::cerr << "error opening frames source" << std::endl;
@@ -27,7 +36,7 @@ int main( int argc, char** argv ) {
     << "x" << cap.get( cv::CAP_PROP_FRAME_HEIGHT ) << std::endl;
     do {
         cv::Mat frame, captured_frame, hsv_frame, roi_frame;
-
+        key = cv::waitKey( 1000.0/60.0 )&0x0ff; 
         if ( cap.read( frame ) ) {
 
 
@@ -43,8 +52,8 @@ int main( int argc, char** argv ) {
             capturing = false;
         }
 
-        if( (cv::waitKey( 1000.0/60.0 )&0x0ff) == 27 ) capturing = false;
-        if((cv::waitKey( 1000.0/60.0 )&0x0ff) == 104 ){                         // 'h' -> hsv
+        if( key == 27 ) capturing = false;
+        if(key == 104 ){                         // 'h' -> hsv
 
             show_hsv = true;
             cv::createTrackbar("h_min", "HSV", &h_min, 179);
@@ -54,27 +63,17 @@ int main( int argc, char** argv ) {
             cv::createTrackbar("s_max", "HSV", &s_max, 255);
             cv::createTrackbar("v_max", "HSV", &v_max, 255);                         
         }
-        if((cv::waitKey( 1000.0/60.0 )&0x0ff) == 32 ){                          // 'SPACE' -> rozmycie Gaussa
+        if(key == 32 ){                          // 'SPACE' -> rozmycie Gaussa
             
             captured_frame = frame;
             
             cv::GaussianBlur(captured_frame, captured_frame, cv::Size(0, 0), 10);
 
-            if(argc==3){
-                
-                height = atoi(argv[1]);
-                width = atoi(argv[2]);
-            } else {
-
-                height = 320;
-                width = 200;
-            }
-
             cv::resize(captured_frame, captured_frame, cv::Size(height, width));
             cv::imshow("Captured frame", captured_frame);
             
         }
-        if((cv::waitKey( 1000.0/60.0 )&0x0ff) == 120 ){                     // 'x' -> roi
+        if(key == 120 ){                     // 'x' -> roi
 
             auto roi = selectROI("Lab2", frame);
             roi_frame = frame(roi);
