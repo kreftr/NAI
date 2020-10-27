@@ -54,6 +54,7 @@ int main( int argc, char** argv ) {
 
         if( key == 27 ) capturing = false;
         if(key == 104 ){                         // 'h' -> hsv
+
             show_hsv = true;
             cv::createTrackbar("h_min", "HSV", &h_min, 179);
             cv::createTrackbar("s_min", "HSV", &s_min, 255);      
